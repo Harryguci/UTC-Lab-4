@@ -1,0 +1,34 @@
+﻿@using UTC_LAB_4.Models;
+
+@{
+    ViewData["Title"] = "Course List";
+}
+
+@model IEnumerable<Course>
+
+
+
+<div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Learner ID</th>
+                <th>Last Name</th>
+                <th>First Mid Name</th>
+                <th>Enrollment Date</th>
+                <th>Major ID</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.CourseID</td>
+                    <td>@item.Title</td>
+                    <td>@item.Credits</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

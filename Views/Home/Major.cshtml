@@ -1,0 +1,28 @@
+﻿@using UTC_LAB_4.Models;
+
+@{
+    ViewData["Title"] = "Major List";
+}
+
+@model IEnumerable<Major>
+
+<div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Major ID</th>
+                <th>Major Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.MajorID</td>
+                    <td>@item.MajorName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -23,6 +23,12 @@ namespace UTC_LAB_4.Controllers
             return View();
         }
 
+        [Route("/Notfoundpage")]
+        public IActionResult Notfoundpage()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

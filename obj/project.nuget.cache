@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "QzlFCwo1+9dbJJmimlqN99PpiHBr2rwtsoJzH/VKZarar7QE6kSDow32YyVaFIe0Y4D0ZpJRi5smQQ3WVNCHRw==",
+  "dgSpecHash": "bWvqnIbZN2FeRKLidh2RHrADwOJoC95u+KCa+2UlnGFNKBGns9daHlxgW9T8DZlAs++w/KTa5f9XhzEmIaK3kQ==",
   "success": true,
   "projectFilePath": "F:\\C-Sharp\\UTC_LAB_4\\UTC_LAB_4.csproj",
   "expectedPackageFiles": [
@@ -33,6 +33,7 @@
     "C:\\Users\\T&H\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "C:\\Users\\T&H\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",
     "C:\\Users\\T&H\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
+    "C:\\Users\\T&H\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
     "C:\\Users\\T&H\\.nuget\\packages\\system.collections.immutable\\6.0.0\\system.collections.immutable.6.0.0.nupkg.sha512",
     "C:\\Users\\T&H\\.nuget\\packages\\system.configuration.configurationmanager\\4.7.0\\system.configuration.configurationmanager.4.7.0.nupkg.sha512",
     "C:\\Users\\T&H\\.nuget\\packages\\system.diagnostics.diagnosticsource\\6.0.0\\system.diagnostics.diagnosticsource.6.0.0.nupkg.sha512",

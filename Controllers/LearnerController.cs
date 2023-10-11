@@ -3,6 +3,8 @@ using UTC_LAB_4.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using UTC_LAB_4.Models;
+using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace UTC_LAB_4.Controllers
 {
@@ -13,10 +15,63 @@ namespace UTC_LAB_4.Controllers
         {
             db = context;
         }
-        public IActionResult Index()
+        public IActionResult Index(int? mid)
         {
-            var learners = db.Learners.Include(m => m.Major).ToList();
-            return View(learners);
+            if (mid == null)
+            {
+                var learners = db.Learners.Include(m => m.Major).ToList();
+                return View(learners);
+            }
+            else
+            {
+                var learners = db.Learners.Where(l => l.MajorID == mid)
+                     .Include(m => m.Major).ToList();
+                return View(learners);
+            }
+        }
+
+        public IActionResult IndexAjax(int? mid)
+        {
+            if (mid == null)
+            {
+                try
+                {
+                    var learners = db.Learners.Include(m => m.Major).ToList();
+                    return View(learners);
+                }
+                catch
+                {
+                    Response.Redirect("/Notfoundpage");
+                    return BadRequest();
+                }
+            }
+            else
+            {
+                try
+                {
+                    var learners = db.Learners.Where(l => l.MajorID == mid)
+                     .Include(m => m.Major).ToList();
+                    return View(learners);
+                }
+                catch
+                {
+                    Response.Redirect("/Notfoundpage");
+                    return BadRequest();
+                }
+
+            }
+        }
+
+
+        public IActionResult LearnByMajorID(int mid)
+        {
+            var learners = db.Learners
+                .Where(l => l.MajorID == mid)
+                .Include(m => m.Major).ToList();
+
+            var view = PartialView("LearnerTable", learners);
+
+            return view;
         }
 
         //thêm 2 action create
@@ -56,17 +111,42 @@ namespace UTC_LAB_4.Controllers
         }
 
         [HttpPost]
-        public void Delete(int LearnerID)
+        public IActionResult Delete(int LearnerID)
         {
             var dbLearner = db.Learners.FirstOrDefault(x => x.LearnerID == LearnerID);
 
             if (dbLearner != null)
             {
                 db.Learners.Remove(dbLearner);
-                db.SaveChanges();
+                try
+                {
+                    db.SaveChanges();
+
+                    return Ok(JsonConvert.SerializeObject(
+                        new
+                        {
+                            status = "success",
+                        }
+                     ));
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.ToString());
+                    return BadRequest(JsonConvert.SerializeObject(
+                        new
+                        {
+                            error = "Can not delete this learner."
+                        }
+                    ));
+                }
             }
 
-            Response.Redirect("/Learner");
+            return BadRequest(JsonConvert.SerializeObject(
+                new
+                {
+                    error = "Can not delete this learner."
+                }
+            ));
         }
 
         [HttpGet]
@@ -89,7 +169,8 @@ namespace UTC_LAB_4.Controllers
             Learner learner)
         {
             var dbLearner = db.Learners.FirstOrDefault(x => x.LearnerID == learner.LearnerID);
-            
+            if (dbLearner == null) return;
+
             dbLearner.LearnerID = learner.LearnerID;
             dbLearner.LastName = learner.LastName;
             dbLearner.FirstMidName = learner.FirstMidName;
@@ -97,10 +178,10 @@ namespace UTC_LAB_4.Controllers
             dbLearner.EnrollmentDate = learner.EnrollmentDate;
 
             db.SaveChanges();
-            
+
             // Redirect to Index
             Response.Redirect("/Learner");
         }
-    
+
     }
 }

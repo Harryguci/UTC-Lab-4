@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Learner>
+@if (Model.Count() > 0)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Mã</th>
+                <th>Tên</th>
+                <th>Họ</th>
+                <th>Ngành</th>
+                <th>Ngày Nhập Học</th>
+                <th>Chức năng</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var s in Model)
+            {
+                <tr>
+                    <td>@s.LearnerID</td>
+                    <td>@s.FirstMidName</td>
+                    <td>@s.LastName</td>
+                    <td>@(@s.Major != null ? @s.Major.MajorName : "none")</td>
+                    <td>@s.EnrollmentDate</td>
+                    <td class="d-flex gap-1">
+                        <a class="btn btn-outline-primary"
+                           href="/Learner/Edit/@s.LearnerID">
+                            <span class="material-symbols-outlined">
+                                edit
+                            </span>
+                        </a>
+                        <button class="btn btn-outline-primary"
+                                onclick="HandleDelete(@s.LearnerID)"
+                                type="button">
+                            <span class="material-symbols-outlined">
+                                delete
+                            </span>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+}
+else
+{
+    <p>Chưa có người học nào.</p>
+}

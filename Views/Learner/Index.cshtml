@@ -4,6 +4,7 @@
 }
 @model IEnumerable<Learner>
 <h1>Learner List</h1>
+@await Component.InvokeAsync("Major")
 <table class="table table-striped">
     <thead>
         <tr>
@@ -16,25 +17,64 @@
         </tr>
     </thead>
     <tbody>
+        
         @foreach (var s in Model)
         {
             <tr>
                 <td>@s.LearnerID</td>
                 <td>@s.FirstMidName</td>
                 <td>@s.LastName</td>
-                <td>@s.Major.MajorName</td>
+                <td>@(@s.Major != null ? @s.Major.MajorName : "none")</td>
                 <td>@s.EnrollmentDate</td>
-                <td>
-                    <div class="d-flex gap-1">
-                        <a class="btn btn-outline-primary" href="/Learner/Edit/@s.LearnerID">Edit</a>
-                        <form asp-action="Delete" method="post">
-                            <input type="hidden" name="LearnerID" value="@s.LearnerID" />
-                            <button class="btn btn-outline-primary" type="submit">Delete</button>
-                        </form>
-                    </div>
+                <td class="d-flex gap-1">
+                    <a class="btn btn-outline-primary"
+                       href="/Learner/Edit/@s.LearnerID">
+                        <span class="material-symbols-outlined">
+                            edit
+                        </span>
+                    </a>
+                    <button class="btn btn-outline-primary"
+                            onclick="HandleDelete(@s.LearnerID)"
+                            type="button">
+                        <span class="material-symbols-outlined">
+                            delete
+                        </span>
+                    </button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 <a asp-action="Create" class="btn btn-primary">Create New Student</a>
+
+@section Scripts {
+    <script>
+        function HandleDelete(id) {
+            console.log('handle delete');
+            if (confirm("Are you sure to delete this learner?"))
+                $.ajax({
+                    type: "POST",
+                    url: "/Learner/Delete",
+                    data: {
+                        LearnerID: id
+                    },
+                    error: function (err) {
+                        console.log(JSON.parse(err.responseText))
+                        if (JSON.parse(err.responseText).error)
+                            alert("ERROR: " + JSON.parse(err.responseText).error);
+                        else
+                            alert("ERROR: " + JSON.stringify(err))
+                    },
+                    success: function (response) {
+                        // Response
+                        console.log(response);
+
+                        if (response.error) {
+                            alert("ERROR: " + response.error);
+                        } else
+                            window.location.href = '/Learner';
+                    }
+                });
+        }
+    </script>
+}

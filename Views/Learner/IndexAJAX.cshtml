@@ -1,0 +1,93 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model IEnumerable<Learner>
+<h1>Learner List</h1>
+@await Component.InvokeAsync("MajorAjax")
+<div id="content">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Mã</th>
+                <th>Tên</th>
+                <th>Họ</th>
+                <th>Ngành</th>
+                <th>Ngày Nhập Học</th>
+                <th>Chức năng</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model)
+            {
+                <tr>
+                    <td>@s.LearnerID</td>
+                    <td>@s.FirstMidName</td>
+                    <td>@s.LastName</td>
+                    <td>@(@s.Major != null ? @s.Major.MajorName : "none")</td>
+                    <td>@s.EnrollmentDate</td>
+                    <td class="d-flex gap-1">
+                        <a class="btn btn-outline-primary"
+                           href="/Learner/Edit/@s.LearnerID">
+                            <span class="material-symbols-outlined">
+                                edit
+                            </span>
+                        </a>
+                        <button class="btn btn-outline-primary"
+                                onclick="HandleDelete(@s.LearnerID)"
+                                type="button">
+                            <span class="material-symbols-outlined">
+                                delete
+                            </span>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<a asp-action="Create" class="btn btn-primary">Create New Student</a>
+
+
+@section Scripts {
+    <script>
+        function HandleDelete(id) {
+            console.log('handle delete');
+            if (confirm("Are you sure to delete this learner?"))
+                $.ajax({
+                    type: "POST",
+                    url: "/Learner/Delete",
+                    data: {
+                        LearnerID: id
+                    },
+
+                    success: function (response) {
+                        // Response
+                        console.log(response);
+
+                        if (response.error) {
+                            alert("ERROR: " + response.error);
+                        } else
+                            window.location.href = '/Learner';
+                    }
+                });
+        }
+    </script>
+
+    <script>
+        $(".major-list .major-list__item").on("click", function (e) {
+            var id = $(this).attr("id");
+
+            // Send a request to the server
+            $.get({
+                url: "/Learner/LearnByMajorID",
+                data: { mid: id },
+                error: function (err) {
+                    alert(JSON.stringify(errr)) // Handling errors
+                }
+            }).done((response) => {
+                $("div#content").html(response)
+            })
+        })
+    </script>
+}

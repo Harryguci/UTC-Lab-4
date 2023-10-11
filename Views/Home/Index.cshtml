@@ -4,5 +4,22 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <div class="container-md">
+        <div class="row my-3">
+            <div class="col-md-6 justify-content-center">
+                <a asp-controller="Learner" asp-action="Index"
+                   class="btn btn-primary d-block w-100 h-100">
+                    <span class="fs-3">Learner List</span> 
+                    <br /><small>(Load đồng bộ)</small>
+                </a>
+            </div>
+            <div class="col-md-6 justify-content-center">
+                <a asp-controller="Learner" asp-action="IndexAjax"
+                class="btn btn-primary d-block w-100 h-100">
+                    <span class="fs-3">Learner List</span> 
+                    <br /><small>(Load không đồng bộ)</small>
+                </a>
+            </div>
+        </div>
+    </div>
 </div>

@@ -3,48 +3,88 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @model IEnumerable<Learner>
+
+<style>
+    .btn-outline-primary[disabled] {
+        color: white;
+        background: rgb(100, 100, 250);
+    }
+</style>
+
 <h1>Learner List</h1>
 @await Component.InvokeAsync("Major")
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Mã</th>
-            <th>Tên</th>
-            <th>Họ</th>
-            <th>Ngành</th>
-            <th>Ngày Nhập Học</th>
-            <th>Chức năng</th>
-        </tr>
-    </thead>
-    <tbody>
-        
-        @foreach (var s in Model)
-        {
+<div id="table-container">
+    <table class="table table-striped">
+        <thead>
             <tr>
-                <td>@s.LearnerID</td>
-                <td>@s.FirstMidName</td>
-                <td>@s.LastName</td>
-                <td>@(@s.Major != null ? @s.Major.MajorName : "none")</td>
-                <td>@s.EnrollmentDate</td>
-                <td class="d-flex gap-1">
-                    <a class="btn btn-outline-primary"
-                       href="/Learner/Edit/@s.LearnerID">
-                        <span class="material-symbols-outlined">
-                            edit
-                        </span>
-                    </a>
-                    <button class="btn btn-outline-primary"
-                            onclick="HandleDelete(@s.LearnerID)"
-                            type="button">
-                        <span class="material-symbols-outlined">
-                            delete
-                        </span>
-                    </button>
-                </td>
+                <th>Mã</th>
+                <th>Tên</th>
+                <th>Họ</th>
+                <th>Ngành</th>
+                <th>Ngày Nhập Học</th>
+                <th>Chức năng</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+
+            @foreach (var s in Model)
+            {
+                <tr>
+                    <td>@s.LearnerID</td>
+                    <td>@s.FirstMidName</td>
+                    <td>@s.LastName</td>
+                    <td>@(@s.Major != null ? @s.Major.MajorName : "none")</td>
+                    <td>@s.EnrollmentDate</td>
+                    <td class="d-flex gap-1">
+                        <a class="btn btn-outline-primary"
+                           href="/Learner/Edit/@s.LearnerID">
+                            <span class="material-symbols-outlined">
+                                edit
+                            </span>
+                        </a>
+                        <button class="btn btn-outline-primary"
+                                onclick="HandleDelete(@s.LearnerID)"
+                                type="button">
+                            <span class="material-symbols-outlined">
+                                delete
+                            </span>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="pagination d-flex justify-content-center">
+        <ul class="list d-flex gap-1" style="list-style: none">
+            <li>
+                @if (ViewBag.HasPreviousPage)
+                {
+                    <button class="btn btn-outline-primary" onclick="HandlePagination(@(ViewBag.PageIndex - 1))">
+                        Pre
+                    </button>
+                }
+            </li>
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li>
+                    <button class="btn btn-outline-primary"
+                    @(@i == ViewBag.PageIndex ? "disabled" : "")
+                            onclick="HandlePagination(@i)">
+                        @i
+                    </button>
+                </li>
+            }
+            <li>
+                @if (ViewBag.HasNextPage)
+                {
+                    <button class="btn btn-outline-primary" onclick="HandlePagination(@(ViewBag.PageIndex + 1))">
+                        Next
+                    </button>
+                }
+            </li>
+        </ul>
+    </div>
+</div>
 <a asp-action="Create" class="btn btn-primary">Create New Student</a>
 
 @section Scripts {
@@ -75,6 +115,17 @@
                             window.location.href = '/Learner';
                     }
                 });
+        }
+
+        function HandlePagination(page) {
+            $.ajax({
+                type: "GET",
+                url: `/Learner/Page?pageIndex=${page}`,
+                success: function (response) {
+                    console.log(response);
+                    document.querySelector('#table-container').innerHTML = response;
+                }
+            });
         }
     </script>
 }

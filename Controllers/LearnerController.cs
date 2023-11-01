@@ -5,29 +5,80 @@ using Microsoft.EntityFrameworkCore;
 using UTC_LAB_4.Models;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using System.Security.Cryptography;
 
 namespace UTC_LAB_4.Controllers
 {
     public class LearnerController : Controller
     {
         private SchoolContext db;
+        private int pageSize = 3;
+
         public LearnerController(SchoolContext context)
         {
             db = context;
         }
-        public IActionResult Index(int? mid)
+        public async Task<IActionResult> Index(int? mid, int pageIndex = 1)
         {
             if (mid == null)
             {
-                var learners = db.Learners.Include(m => m.Major).ToList();
+                var learners = await db.Learners.Include(m => m.Major)
+                    .Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                var count = db.Learners.Count();
+                var totalPages = (int)Math.Ceiling(count / (double)pageSize);
+
+                ViewBag.HasPreviousPage = pageSize > 1;
+                ViewBag.HasNextPage = pageIndex < totalPages;
+                ViewBag.TotalPages = totalPages;
+                ViewBag.Count = count;
+                ViewBag.PageIndex = pageIndex;
+
                 return View(learners);
             }
             else
             {
-                var learners = db.Learners.Where(l => l.MajorID == mid)
+                var learners = db.Learners
+                    .Skip((pageIndex - 1) * pageSize)
+                    .Take(pageSize)
+                    .Where(l => l.MajorID == mid)
                      .Include(m => m.Major).ToList();
+
+                var count = db.Learners
+                    .Where(l => l.MajorID == mid).Count();
+                var totalPages = (int)Math.Ceiling( count / (double)pageSize);
+
+
+                ViewBag.HasPreviousPage = pageSize > 1;
+                ViewBag.HasNextPage = pageIndex < totalPages;
+                ViewBag.TotalPages = totalPages;
+                ViewBag.Count = count;
+                ViewBag.PageIndex = pageIndex;
+
                 return View(learners);
             }
+        }
+
+        public IActionResult Page(int pageIndex = 1)
+        {
+            var learners = db.Learners
+                   .Skip((pageIndex - 1) * pageSize)
+            .Take(pageSize)
+                    .Include(m => m.Major).ToList();
+
+            var count = db.Learners.Count();
+
+            var totalPages = (int)Math.Ceiling(count / (double)pageSize);
+
+            ViewBag.HasPreviousPage = pageSize > 1;
+            ViewBag.HasNextPage = pageIndex < totalPages;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.Count = count;
+            ViewBag.PageIndex = pageIndex;
+
+            return PartialView(learners);
         }
 
         public IActionResult IndexAjax(int? mid)
